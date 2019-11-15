@@ -1,7 +1,7 @@
 class Spree::ReviewsController < Spree::StoreController
   helper Spree::BaseHelper
   before_action :load_product, only: [:index, :new, :create]
-  rescue_from ActiveRecord::RecordNotFound, with: :render_404
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
   def index
     @approved_reviews = Spree::Review.approved.where(product: @product)
@@ -43,5 +43,9 @@ class Spree::ReviewsController < Spree::StoreController
 
   def review_params
     params.require(:review).permit(permitted_review_attributes)
+  end
+
+  def not_found
+    render file: "#{Rails.root}/public/404", status: :not_found
   end
 end
