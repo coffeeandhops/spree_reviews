@@ -17,6 +17,12 @@ module Spree::ProductDecorator
     end
     save
   end
+
+  def public_reviews
+    return reviews if Spree::Reviews::Config[:include_unapproved_reviews]
+    reviews.approved
+  end
+
 end
 
 Spree::Product.prepend Spree::ProductDecorator

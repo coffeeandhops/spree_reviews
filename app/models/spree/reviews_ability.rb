@@ -14,4 +14,5 @@ class Spree::ReviewsAbility
   def self.allow_anonymous_reviews?
     !Spree::Reviews::Config[:require_login]
   end
+
 end
