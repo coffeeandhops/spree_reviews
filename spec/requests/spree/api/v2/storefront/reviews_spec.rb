@@ -10,6 +10,10 @@ describe 'API V2 Storefront Reviews Spec', type: :request do
   let!(:approved_review_3) { create(:review, product: product, approved: true, rating: 5, user: user2) }
   let!(:approved_review_4) { create(:review, product: product, approved: true, rating: 5, user: user2) }
   let!(:unapproved_review_1) { create(:review, product: product, approved: false, rating: 4, user: user) }
+  let!(:feedback_review_1) { create(:feedback_review, created_at: 10.days.ago, review: approved_review_1) }
+  let!(:feedback_review_2) { create(:feedback_review, created_at: 2.days.ago, review: approved_review_1) }
+  let!(:feedback_review_3) { create(:feedback_review, created_at: 5.days.ago, review: approved_review_1) }
+
   let(:review_params) {
     {
       product_id: product.id,
@@ -78,10 +82,19 @@ describe 'API V2 Storefront Reviews Spec', type: :request do
 
       it 'returns a valid JSON response' do
         expect(json_response['data']).to have_attribute(:title).with_value(approved_review_1.title)
-
         expect(json_response['data']).to have_relationships(
-          :user, :product
+          :user, :product, :feedback_reviews
         )
+      end
+    end
+
+    context 'with feedback_reviews included' do
+      before { get "/api/v2/storefront/reviews/#{approved_review_1.id}?include=feedback_reviews" }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns a valid JSON response' do
+        expect(json_response['included']).to   include(have_type('feedback_review').and(have_attribute(:comment).with_value(feedback_review_1.comment)))
       end
     end
 

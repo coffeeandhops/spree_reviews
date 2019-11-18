@@ -112,7 +112,8 @@ module Spree
           def scope_includes
             {
               product: {},
-              user: {}
+              user: {},
+              feedback_reviews: []
             }
           end
 

@@ -6,7 +6,7 @@ module Spree
 
         belongs_to :product
         belongs_to :user
-        # has_many   :feedback_reviews
+        has_many   :feedback_reviews
       
         attributes :name, :review, :rating, :title, :location, :approved
 
