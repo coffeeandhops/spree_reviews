@@ -22,6 +22,10 @@ describe 'API V2 Storefront Reviews Spec', type: :request do
     }
   }
 
+  before do
+    Spree::Reviews::Config[:require_login] = true
+  end
+
   include_context 'API v2 tokens'
 
   describe 'reviews#index' do
@@ -106,9 +110,7 @@ describe 'API V2 Storefront Reviews Spec', type: :request do
   describe 'reviews#create' do
     context 'for current_user' do
       let(:headers) { headers_bearer }
-
       before { post "/api/v2/storefront/reviews", headers: headers, params: review_params }
-
       it_behaves_like 'returns 201 HTTP status'
 
       it 'returns new review' do
@@ -187,6 +189,15 @@ describe 'API V2 Storefront Reviews Spec', type: :request do
       it_behaves_like 'returns 403 HTTP status'
     end
 
+    context 'for guest user with anonymous reviews allowed' do
+      let(:headers) { {} }
+      
+      before do
+        Spree::Reviews::Config[:require_login] = false
+        post "/api/v2/storefront/reviews", headers: headers, params: review_params
+      end
 
+      it_behaves_like 'returns 201 HTTP status'
+    end
   end
 end

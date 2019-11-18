@@ -15,7 +15,7 @@ module Spree
           end
 
           def create
-            require_spree_current_user
+            require_spree_current_user unless !Spree::Reviews::Config[:require_login]
 
             params[:rating] = params[:rating].sub!(/\s*[^0-9]*\z/, '') unless params[:rating].blank?
             review_params = {
@@ -27,7 +27,8 @@ module Spree
                 name: params[:name],
                 rating: params[:rating],
                 location: params[:location],
-                show_identifier: params[:show_identifier]
+                show_identifier: params[:show_identifier],
+                ip_address: request.remote_ip
               }
             }
 
@@ -40,41 +41,44 @@ module Spree
             end
           end
 
-          # def destroy
-          #   require_spree_current_user
-          #   spree_authorize! :delete, resource, spree_current_user
-          #   review = resource
-          #   delete_service.call(review: review)
-
-          #   render_serialized_payload { serialize_resource(review) }
-          # end
-
           private
-          # # THIS HAS BEEN MOVED TO BASE CONTROLLER
-          # def serialize_resource(resource)
-          #   resource_serializer.new(
-          #     resource,
-          #     include: resource_includes,
-          #     fields: sparse_fields
-          #   ).serializable_hash
-          # end
+          # THIS HAS BEEN MOVED TO BASE CONTROLLER
+          def serialize_resource(resource)
+            if version >= Gem::Version.new('4.0')
+              super
+            else
+              resource_serializer.new(
+                resource,
+                include: resource_includes,
+                fields: sparse_fields
+              ).serializable_hash
+            end
+          end
 
           # THIS HAS BEEN MOVED TO BASE CONTROLLER
           def serialize_collection(collection)
-            collection_serializer.new(
-              collection,
-              collection_options(collection)
-            ).serializable_hash
+            if version >= Gem::Version.new('4.0')
+              super
+            else
+              collection_serializer.new(
+                collection,
+                collection_options(collection)
+              ).serializable_hash
+            end
           end
       
           # THIS HAS BEEN MOVED TO BASE CONTROLLER
           def collection_options(collection)
-            {
-              links: collection_links(collection),
-              meta: collection_meta(collection),
-              include: resource_includes,
-              fields: sparse_fields
-            }
+            if version >= Gem::Version.new('4.0')
+              super
+            else
+              {
+                links: collection_links(collection),
+                meta: collection_meta(collection),
+                include: resource_includes,
+                fields: sparse_fields
+              }
+            end
           end
 
           def resource
@@ -113,12 +117,8 @@ module Spree
           end
 
           def create_service
-            Spree::Api::V2::Storefront::Review::Create
+            Spree::Reviews::Config[:storefront_review_create_service].constantize
           end
-
-          # def delete_service
-          #   Spree::Api::V2::Storefront::Review::Delete
-          # end
 
           def paginated_collection
             collection_paginator.new(collection, params).call
@@ -142,6 +142,9 @@ module Spree
             @product = Spree::Product.friendly.find(params[:product_id]) if !params[:product_id].nil?
           end
 
+          def version
+            @version ||= Gem.loaded_specs["spree_api"].version.release
+          end
         end
       end
     end
