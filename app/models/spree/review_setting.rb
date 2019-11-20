@@ -21,7 +21,11 @@ module Spree
     # Render checkbox for a user to approve to show their identifier
     # (name or email) on their review.
     preference :show_identifier, :boolean, default: false
-
+    
+    # Review create Service class for storefront api
+    preference :storefront_review_create_service, :string, default: "Spree::Api::V2::Storefront::Review::Create"
+    preference :storefront_feedback_review_create_service, :string, default: "Spree::Api::V2::Storefront::FeedbackReview::Create"
+    
     def stars
       5
     end
