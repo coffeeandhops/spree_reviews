@@ -24,7 +24,8 @@ module Spree
     
     # Review create Service class for storefront api
     preference :storefront_review_create_service, :string, default: "Spree::Api::V2::Storefront::Review::Create"
-
+    preference :storefront_feedback_review_create_service, :string, default: "Spree::Api::V2::Storefront::FeedbackReview::Create"
+    
     def stars
       5
     end

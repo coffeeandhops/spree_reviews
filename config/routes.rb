@@ -23,7 +23,8 @@ Spree::Core::Engine.add_routes do
         #   resources :reviews, only: [:index, :new, :create] do
         #   end
         # end
-        resources :reviews, only: [:show, :index, :create, :destroy]
+        resources :reviews, only: [:show, :index, :create]
+        resources :feedback_reviews, only: [:create]
       end
     end
   end
