@@ -6,8 +6,8 @@ module SpreeReviews
       def add_javascripts
         if File.exist?('vendor/assets/javascripts/spree/frontend/all.js')
           append_file 'vendor/assets/javascripts/spree/frontend/all.js', "//= require spree/frontend/spree_reviews\n"
-          append_file 'vendor/assets/javascripts/spree/backend/all.js', "//= require spree/backend/spree_reviews\n"
         end
+        append_file 'vendor/assets/javascripts/spree/backend/all.js', "//= require spree/backend/spree_reviews\n"
       end
 
       def add_stylesheets
