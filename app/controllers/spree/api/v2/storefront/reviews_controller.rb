@@ -5,6 +5,7 @@ module Spree
         class ReviewsController < ::Spree::Api::V2::BaseController
           include Spree::Api::V2::CollectionOptionsHelpers
           before_action :load_product, only: [:index, :new, :create]
+          before_action :sanitize_rating, only: [:create]
           
           def index
             render_serialized_payload { serialize_collection(paginated_collection) }
@@ -17,7 +18,6 @@ module Spree
           def create
             require_spree_current_user unless !Spree::Reviews::Config[:require_login]
 
-            params[:rating] = params[:rating].sub!(/\s*[^0-9]*\z/, '') unless params[:rating].blank?
             review_params = {
               user: spree_current_user,
               product: @product,
@@ -149,6 +149,11 @@ module Spree
           def is_admin?
             spree_current_user && spree_current_user.respond_to?(:has_spree_role?) && spree_current_user.has_spree_role?('admin')
           end
+
+          def sanitize_rating
+            params[:rating].to_s.sub!(/\s*[^0-9]*\z/, '') unless params[:rating].nil?
+          end
+
         end
       end
     end

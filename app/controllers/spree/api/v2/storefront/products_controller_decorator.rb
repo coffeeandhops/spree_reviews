@@ -1,6 +1,5 @@
 module Spree::Api::V2::Storefront::ProductsControllerDecorator
 
-  private
   def scope_includes
     {
       master: :default_price,
@@ -13,5 +12,7 @@ module Spree::Api::V2::Storefront::ProductsControllerDecorator
       reviews: []
     }
   end
+  
 end
+
 Spree::Api::V2::Storefront::ProductsController.prepend Spree::Api::V2::Storefront::ProductsControllerDecorator
