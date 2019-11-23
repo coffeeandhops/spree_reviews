@@ -89,8 +89,7 @@ module Spree
             # allow admin or owner to get unapproved review
             require_spree_current_user
             
-            is_admin = spree_current_user.respond_to?(:has_spree_role?) && spree_current_user.has_spree_role?('admin')
-            return review if is_admin || review.user_id == spree_current_user.id
+            return review if is_admin? || review.user_id == spree_current_user.id
           end
 
           def resource_serializer
@@ -127,7 +126,7 @@ module Spree
 
           def collection
             if @product
-              return @product.reviews if spree_current_user && spree_current_user.role == "admin"
+              return @product.reviews if is_admin?
               return @product.public_reviews
             end
 
@@ -145,6 +144,10 @@ module Spree
 
           def version
             @version ||= Gem.loaded_specs["spree_api"].version.release
+          end
+
+          def is_admin?
+            spree_current_user && spree_current_user.respond_to?(:has_spree_role?) && spree_current_user.has_spree_role?('admin')
           end
         end
       end
