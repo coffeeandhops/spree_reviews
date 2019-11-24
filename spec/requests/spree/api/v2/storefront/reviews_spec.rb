@@ -82,6 +82,7 @@ describe 'API V2 Storefront Reviews Spec', type: :request do
 
       it 'returns a valid JSON response' do
         expect(json_response['data']).to have_attribute(:title).with_value(approved_review_1.title)
+        expect(json_response['data']).to have_attribute(:created_at)
         expect(json_response['data']).to have_relationships(
           :user, :product, :feedback_reviews
         )
