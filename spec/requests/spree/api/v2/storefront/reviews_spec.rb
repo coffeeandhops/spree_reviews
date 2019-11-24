@@ -213,4 +213,35 @@ describe 'API V2 Storefront Reviews Spec', type: :request do
       it_behaves_like 'returns 201 HTTP status'
     end
   end
+
+  describe 'reviews#settings' do
+
+    let(:expected) {
+      {
+        include_unapproved_reviews: Spree::Reviews::Config[:include_unapproved_reviews],
+        preview_size: Spree::Reviews::Config[:preview_size],
+        show_email: Spree::Reviews::Config[:show_email],
+        feedback_rating: Spree::Reviews::Config[:feedback_rating],
+        require_login: Spree::Reviews::Config[:require_login],
+        show_identifier: Spree::Reviews::Config[:show_identifier]
+      }
+    }
+
+    context 'returns settings' do
+      # before { get "/api/v2/storefront/review_settings/1" }
+      before { get "/api/v2/storefront/reviews/settings" }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns reviews for the product' do
+        expect(json_response['data']).to have_attribute(:include_unapproved_reviews).with_value(expected[:include_unapproved_reviews])
+        expect(json_response['data']).to have_attribute(:preview_size).with_value(expected[:preview_size])
+        expect(json_response['data']).to have_attribute(:show_email).with_value(expected[:show_email])
+        expect(json_response['data']).to have_attribute(:feedback_rating).with_value(expected[:feedback_rating])
+        expect(json_response['data']).to have_attribute(:require_login).with_value(expected[:require_login])
+        expect(json_response['data']).to have_attribute(:show_identifier).with_value(expected[:show_identifier])
+      end
+    end
+  end
+
 end

@@ -41,6 +41,21 @@ module Spree
             end
           end
 
+          def setting
+            render json: {
+              data: {
+                attributes: {
+                  include_unapproved_reviews: Spree::Reviews::Config[:include_unapproved_reviews],
+                  preview_size: Spree::Reviews::Config[:preview_size],
+                  show_email: Spree::Reviews::Config[:show_email],
+                  feedback_rating: Spree::Reviews::Config[:feedback_rating],
+                  require_login: Spree::Reviews::Config[:require_login],
+                  show_identifier: Spree::Reviews::Config[:show_identifier]
+                }
+              }
+            }
+          end
+
           private
           # THIS HAS BEEN MOVED TO BASE CONTROLLER
           def serialize_resource(resource)

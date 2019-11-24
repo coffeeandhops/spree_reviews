@@ -19,11 +19,9 @@ Spree::Core::Engine.add_routes do
     namespace :v2 do
 
       namespace :storefront do
-        # resources :products, only: [] do
-        #   resources :reviews, only: [:index, :new, :create] do
-        #   end
-        # end
-        resources :reviews, only: [:show, :index, :create]
+        resources :reviews, only: [:show, :index, :create] do
+          get '/settings', action: :setting, controller: 'reviews', as: :review_settings, on: :collection
+        end
         resources :feedback_reviews, only: [:create]
       end
     end
